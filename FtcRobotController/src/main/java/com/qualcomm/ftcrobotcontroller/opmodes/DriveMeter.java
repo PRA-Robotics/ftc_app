@@ -16,7 +16,9 @@ public class DriveMeter extends LinearOpMode {
 
         waitForStart();
 
-        A.TurnDegrees(100, 0.25);//Encoder moving to fast could cause problems.
+        A.DriveDist(100, 0.25);//Encoder moving to fast could cause problems.
+        A.waitForPos();
+        A.TurnDegrees(90, 0.1);
         A.waitForPos();
         telemetry.addData("Status: ", "Done");
     }

@@ -31,17 +31,15 @@ public class Autonomous{
         MR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
     }
 
-    public void resetMotors(){
-        ML.setPower(0);
-        MR.setPower(0);
-        ML.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        MR.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+    public void resetMotor(DcMotor M){
+        M.setPower(0);
+        M.setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 
-    public boolean isDone(){
-        int current = ML.getCurrentPosition();
-        int diff = Math.abs(LT-current);
-        if(diff <= 100) {
+    public boolean isDone(DcMotor M, int T){
+        int current = M.getCurrentPosition();
+        int diff = Math.abs(T-current);
+        if(diff <= 10) {
             return (true);
         }
         else {
@@ -50,8 +48,18 @@ public class Autonomous{
     }
 
     public void waitForPos(){
-        while(!isDone()){}
-        resetMotors();
+        boolean DL = isDone(ML,LT);
+        boolean DR = isDone(MR,RT);
+        while(!DL || !DR) {
+            if(DL){
+                resetMotor(ML);
+            }
+            if(DR){
+                resetMotor(MR);
+            }
+        }
+        resetMotor(ML);
+        resetMotor(MR);
     }
 
     public void DriveDist (double distance, double speed) {
