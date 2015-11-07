@@ -58,11 +58,6 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("VSpeedTeleOp", VSpeedTeleOp.class);
     manager.register("DriveMeter", DriveMeter.class);
     manager.register("NullOp", NullOp.class);
-
-<<<<<<< HEAD
-=======
-    //manager.register("MatrixK9TeleOp", MatrixK9TeleOp.class);
->>>>>>> upstream/master
     manager.register("K9TeleOp", K9TeleOp.class);
     manager.register("K9Line", K9Line.class);
     manager.register ("PushBotAuto", PushBotAuto.class);
@@ -98,21 +93,15 @@ public class FtcOpModeRegister implements OpModeRegister {
     //manager.register ("PushBotManualSensors", PushBotManualSensors.class);
     //manager.register ("PushBotOdsDetectEvent", PushBotOdsDetectEvent.class);
     //manager.register ("PushBotOdsFollowEvent", PushBotOdsFollowEvent.class);
-<<<<<<< HEAD
     //manager.register ("PushBotTouchEvent", PushBotTouchEvent.class);    
     
     //manager.register("PushBotDriveTouch", PushBotDriveTouch.class);
     //manager.register("PushBotIrSeek", PushBotIrSeek.class);
     //manager.register("PushBotSquare", PushBotSquare.class);
-
-    
-    
-=======
     //manager.register ("PushBotTouchEvent", PushBotTouchEvent.class);
 
     //manager.register("PushBotDriveTouch", PushBotDriveTouch.java);
     //manager.register("PushBotIrSeek", PushBotIrSeek.java);
     //manager.register("PushBotSquare", PushBotSquare.java);
->>>>>>> upstream/master
   }
 }

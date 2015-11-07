@@ -14,8 +14,10 @@ public class Autonomous{
     private double Diam;
     private double WB;
     private double TPR;
-    public DcMotor MR;
     public DcMotor ML;
+    public DcMotor MR;
+    public int LT;
+    public int RT;
     public int State = 0;
 
     public Autonomous (double wheelDiameter, double wheelBase, double ticksPerRotation, DcMotor leftMotor, DcMotor rightMotor){
@@ -25,35 +27,39 @@ public class Autonomous{
         ML = leftMotor;
         MR = rightMotor;
         ML.setDirection(DcMotor.Direction.REVERSE);
-        ML.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
-        MR.setChannelMode(DcMotorController.RunMode.RUN_TO_POSITION);
+        ML.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        MR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
     }
 
     public void resetMotors(){
         ML.setPower(0);
         MR.setPower(0);
-        ML.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
-        MR.setChannelMode(DcMotorController.RunMode.RESET_ENCODERS);
+        ML.setMode(DcMotorController.RunMode.RESET_ENCODERS);
+        MR.setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 
-    public boolean isDone(DcMotor M){
-        int target = M.getTargetPosition();
-        int current = M.getCurrentPosition();
-        int diff = Math.abs(target-current);
-        if(diff <= 10) {
-            return true;
+    public boolean isDone(){
+        int current = ML.getCurrentPosition();
+        int diff = Math.abs(LT-current);
+        if(diff <= 100) {
+            return (true);
         }
         else {
-            return false;
+            return (false);
         }
+    }
+
+    public void waitForPos(){
+        while(!isDone()){}
+        resetMotors();
     }
 
     public void DriveDist (double distance, double speed) {
         double cir = Diam * Math.PI;
         double rots = distance/cir;
         double ticks = speed > 0 ? rots * TPR : -rots * TPR;
-        ML.setTargetPosition((int) ticks);
-        MR.setTargetPosition((int) ticks);
+        LT += (int) ticks;
+        RT += (int) ticks;
         ML.setPower(speed);
         MR.setPower(speed);
     }
@@ -64,8 +70,8 @@ public class Autonomous{
         double dist = tCir * (degrees/360);
         double rots = dist/cir;
         double ticks = speed > 0 ? rots * TPR : -rots * TPR;
-        ML.setTargetPosition(ML.getCurrentPosition() + (int) ticks);
-        MR.setTargetPosition(MR.getCurrentPosition() - (int) ticks);
+        LT += (int) ticks;
+        RT -= (int) ticks;
         ML.setPower(speed);
         MR.setPower(-speed);
     }
