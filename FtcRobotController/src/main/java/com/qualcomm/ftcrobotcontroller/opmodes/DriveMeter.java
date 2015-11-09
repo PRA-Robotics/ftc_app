@@ -12,7 +12,7 @@ public class DriveMeter extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         DcMotor L = hardwareMap.dcMotor.get("L");
         DcMotor R = hardwareMap.dcMotor.get("R");
-        A = new Autonomous(12.7, 38.1, 1675, L, R);
+        A = new Autonomous(8.1, 38.1, 1675, L, R);
 
         waitForStart();
 

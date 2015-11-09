@@ -31,9 +31,8 @@ public class Autonomous{
         MR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
     }
 
-    public void resetMotor(DcMotor M){
+    public void stopMotor(DcMotor M){
         M.setPower(0);
-        M.setMode(DcMotorController.RunMode.RESET_ENCODERS);
     }
 
     public boolean isDone(DcMotor M, int T){
@@ -48,18 +47,12 @@ public class Autonomous{
     }
 
     public void waitForPos(){
-        boolean DL = isDone(ML,LT);
-        boolean DR = isDone(MR,RT);
-        while(!DL || !DR) {
-            if(DL){
-                resetMotor(ML);
-            }
-            if(DR){
-                resetMotor(MR);
-            }
-        }
-        resetMotor(ML);
-        resetMotor(MR);
+        boolean DL;
+        do {
+            DL = isDone(ML,LT);
+        } while(!DL); // Add code for right motor as well.
+        stopMotor(ML);
+        stopMotor(MR);
     }
 
     public void DriveDist (double distance, double speed) {
