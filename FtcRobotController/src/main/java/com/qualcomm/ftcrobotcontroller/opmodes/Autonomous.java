@@ -3,24 +3,25 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
-/**
- *  This class is a general purpose utility library for writing autonomous programs.
- *
- *  CAUTION: As of 2015.10.25, this code is untested! This comment will be revised
- *  after testing has been completed.
- */
+import java.util.HashMap;
+
 public class Autonomous{
+    private HashMap<String,UltrasonicSensor> USSM;
+    private HashMap<String,TouchSensor> TSM;
     private double Diam;
     private double WB;
     private double TPR;
-    public DcMotor ML;
-    public DcMotor MR;
-    public int LT;
-    public int RT;
-    public int State = 0;
+    private DcMotor ML;
+    private DcMotor MR;
+    private int LT;
+    private int RT;
 
     public Autonomous (double wheelDiameter, double wheelBase, double ticksPerRotation, DcMotor leftMotor, DcMotor rightMotor){
+        USSM = new HashMap<String,UltrasonicSensor>();
         Diam = wheelDiameter;
         WB = wheelBase;
         TPR = ticksPerRotation;
@@ -31,11 +32,7 @@ public class Autonomous{
         MR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
     }
 
-    public void stopMotor(DcMotor M){
-        M.setPower(0);
-    }
-
-    public boolean isDone(DcMotor M, int T){
+    private boolean isDone(DcMotor M, int T){
         int current = M.getCurrentPosition();
         int diff = Math.abs(T-current);
         if(diff <= 10) {
@@ -46,16 +43,25 @@ public class Autonomous{
         }
     }
 
-    public void waitForPos(){
+    private void waitForPos(){
         boolean DL;
         do {
             DL = isDone(ML,LT);
         } while(!DL); // Add code for right motor as well.
-        stopMotor(ML);
-        stopMotor(MR);
+        ML.setPower(0);
+        MR.setPower(0);
+    }
+
+    public void addSensor(String sensorName, UltrasonicSensor device) {
+        USSM.put(sensorName, device);
+    }
+
+    public UltrasonicSensor getSensor(String sensorName) {
+        return (USSM.get(sensorName));
     }
 
     public void DriveDist (double distance, double speed) {
+        waitForPos();
         double cir = Diam * Math.PI;
         double rots = distance/cir;
         double ticks = speed > 0 ? rots * TPR : -rots * TPR;
@@ -66,6 +72,7 @@ public class Autonomous{
     }
 
     public void TurnDegrees (double degrees, double speed){
+        waitForPos();
         double cir = Diam * Math.PI;
         double tCir = WB * Math.PI;
         double dist = tCir * (degrees/360);
@@ -75,5 +82,9 @@ public class Autonomous{
         RT -= (int) ticks;
         ML.setPower(speed);
         MR.setPower(-speed);
+    }
+
+    public void stopRobot(){
+        waitForPos();
     }
 }
