@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 import java.util.HashMap;
 
 public class Autonomous{
-    private HashMap<String,UltrasonicSensor> USSM;
-    private HashMap<String,TouchSensor> TSM;
+    private HashMap<String,HardwareDevice> HWDS;
     private double Diam;
     private double WB;
     private double TPR;
@@ -21,7 +19,7 @@ public class Autonomous{
     private int RT;
 
     public Autonomous (double wheelDiameter, double wheelBase, double ticksPerRotation, DcMotor leftMotor, DcMotor rightMotor){
-        USSM = new HashMap<String,UltrasonicSensor>();
+        HWDS = new HashMap<String,HardwareDevice>();
         Diam = wheelDiameter;
         WB = wheelBase;
         TPR = ticksPerRotation;
@@ -52,12 +50,21 @@ public class Autonomous{
         MR.setPower(0);
     }
 
-    public void addSensor(String sensorName, UltrasonicSensor device) {
-        USSM.put(sensorName, device);
+    public void addDevice(String deviceName, UltrasonicSensor device) {
+        HWDS.put(deviceName, device);
     }
 
-    public UltrasonicSensor getSensor(String sensorName) {
-        return (USSM.get(sensorName));
+    public UltrasonicSensor getUSS(String deviceName) {
+        return ((UltrasonicSensor) HWDS.get(deviceName));
+    }
+
+    public void driveToDist (double targetDist, double speed, String sensorID){
+        ML.setPower(speed);
+        MR.setPower(speed);
+        UltrasonicSensor USS = getUSS(sensorID);
+        double diff = Math.abs(targetDist - USS.getUltrasonicLevel());
+        while(diff <= 3){};
+        stopRobot();
     }
 
     public void DriveDist (double distance, double speed) {
