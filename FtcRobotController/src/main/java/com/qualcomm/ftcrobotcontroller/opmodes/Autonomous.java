@@ -1,5 +1,6 @@
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
@@ -8,7 +9,7 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 import java.util.HashMap;
 
-public class Autonomous{
+public class Autonomous extends LinearOpMode {
     private HashMap<String,HardwareDevice> HWDS;
     private double Diam;
     private double WB;
@@ -41,9 +42,10 @@ public class Autonomous{
         }
     }
 
-    private void waitForPos(){
+    private void waitForPos() throws InterruptedException {
         boolean DL;
         do {
+            waitForNextHardwareCycle();
             DL = isDone(ML,LT);
         } while(!DL); // Add code for right motor as well.
         ML.setPower(0);
@@ -58,16 +60,16 @@ public class Autonomous{
         return ((UltrasonicSensor) HWDS.get(deviceName));
     }
 
-    public void driveToDist (double targetDist, double speed, String sensorID){
+    public void driveToDist (double targetDist, double speed, String sensorID) throws InterruptedException {
         ML.setPower(speed);
         MR.setPower(speed);
         UltrasonicSensor USS = getUSS(sensorID);
         double diff = Math.abs(targetDist - USS.getUltrasonicLevel());
-        while(diff <= 3){};
+        while(diff <= 3){waitForNextHardwareCycle();};
         stopRobot();
     }
 
-    public void DriveDist (double distance, double speed) {
+    public void DriveDist (double distance, double speed) throws InterruptedException {
         waitForPos();
         double cir = Diam * Math.PI;
         double rots = distance/cir;
@@ -78,7 +80,7 @@ public class Autonomous{
         MR.setPower(speed);
     }
 
-    public void TurnDegrees (double degrees, double speed){
+    public void TurnDegrees (double degrees, double speed) throws InterruptedException {
         waitForPos();
         double cir = Diam * Math.PI;
         double tCir = WB * Math.PI;
@@ -91,7 +93,10 @@ public class Autonomous{
         MR.setPower(-speed);
     }
 
-    public void stopRobot(){
+    public void stopRobot() throws InterruptedException {
         waitForPos();
     }
+
+    @Override
+    public void runOpMode() throws InterruptedException {}
 }
