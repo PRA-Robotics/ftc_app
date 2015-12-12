@@ -13,26 +13,28 @@ public class DriveMeter extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         DcMotor L = hardwareMap.dcMotor.get("L");
         DcMotor R = hardwareMap.dcMotor.get("R");
-        A = new Autonomous(12.7, 38.2, 1675, L, R);
-        A.addDevice("USS1", hardwareMap.ultrasonicSensor.get("USS1"));
-
+        A = new Autonomous(9.1, 38, 1120, L, R);
         waitForStart();
 
-        A.driveToDist(50,-0.25,"USS1");
-        /*A.DriveDist(144.5,-0.3);
-        A.TurnDegrees(90,0.25);
-        A.DriveDist(100,-0.3);
+      //  A.DriveDist(100,0.25);
+        A.DriveDist(144.5,0.3);
+        A.TurnDegrees(90,-0.25);
+        A.DriveDist(100,0.3);
         //drop climbers into bin and hit correct button
-        A.TurnDegrees(180,-0.25);
-        A.DriveDist(100,-0.3);
+        A.TurnDegrees(180,0.25);
+        A.DriveDist(100,0.3);
         A.TurnDegrees(90,0.25);
-        A.DriveDist(123,-0.3);
+        A.DriveDist(123,0.3);
         A.TurnDegrees(45,0.25);
-        A.DriveDist(120,-1);*/
+        A.DriveDist(120,1);
 
-
-
-        A.stopRobot();
+        while(true) {
+            telemetry.addData("LE: ", A.getLeftMotor().getCurrentPosition());
+            telemetry.addData("LT: ", A.getLeftTarget());
+            telemetry.addData("RE: ", A.getRightMotor().getCurrentPosition());
+            telemetry.addData("RT: ", A.getRightTarget());
+            A.stopRobot();
+        }
     }
 }
 

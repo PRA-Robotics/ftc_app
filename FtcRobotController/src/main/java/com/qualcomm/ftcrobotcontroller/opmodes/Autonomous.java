@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.Util;
 
 import java.util.HashMap;
 
-public class Autonomous extends LinearOpMode {
+public class Autonomous {
     private HashMap<String,HardwareDevice> HWDS;
     private double Diam;
     private double WB;
@@ -26,9 +28,25 @@ public class Autonomous extends LinearOpMode {
         TPR = ticksPerRotation;
         ML = leftMotor;
         MR = rightMotor;
-        ML.setDirection(DcMotor.Direction.REVERSE);
+        MR.setDirection(DcMotor.Direction.REVERSE);
         ML.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
         MR.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+    }
+
+    public DcMotor getLeftMotor() {
+        return ML;
+    }
+
+    public DcMotor getRightMotor() {
+        return MR;
+    }
+
+    public int getLeftTarget() {
+        return LT;
+    }
+
+    public int getRightTarget() {
+        return RT;
     }
 
     private boolean isDone(DcMotor M, int T){
@@ -42,10 +60,9 @@ public class Autonomous extends LinearOpMode {
         }
     }
 
-    private void waitForPos() throws InterruptedException {
+    private void waitForPos() {
         boolean DL;
         do {
-            waitForNextHardwareCycle();
             DL = isDone(ML,LT);
         } while(!DL); // Add code for right motor as well.
         ML.setPower(0);
@@ -60,16 +77,27 @@ public class Autonomous extends LinearOpMode {
         return ((UltrasonicSensor) HWDS.get(deviceName));
     }
 
-    public void driveToDist (double targetDist, double speed, String sensorID) throws InterruptedException {
-        ML.setPower(speed);
-        MR.setPower(speed);
+    /*public void driveToRead (double targetDist, String sensorID) throws InterruptedException {
         UltrasonicSensor USS = getUSS(sensorID);
-        double diff = Math.abs(targetDist - USS.getUltrasonicLevel());
-        while(diff <= 3){waitForNextHardwareCycle();};
+        double diff;
+        do {
+            waitForNextHardwareCycle();
+            diff = Math.abs(targetDist - USS.getUltrasonicLevel());
+            double sp = diff;
+            Range.clip(sp,-1,1);
+            if(targetDist < USS.getUltrasonicLevel()) {
+                ML.setPower(sp);
+                MR.setPower(sp);
+            }
+            else {
+                ML.setPower(-diff/50);
+                MR.setPower(-diff/50);
+            }
+        } while(diff <= 3);
         stopRobot();
-    }
+    }*/
 
-    public void DriveDist (double distance, double speed) throws InterruptedException {
+    public void DriveDist (double distance, double speed) {
         waitForPos();
         double cir = Diam * Math.PI;
         double rots = distance/cir;
@@ -80,7 +108,7 @@ public class Autonomous extends LinearOpMode {
         MR.setPower(speed);
     }
 
-    public void TurnDegrees (double degrees, double speed) throws InterruptedException {
+    public void TurnDegrees (double degrees, double speed) {
         waitForPos();
         double cir = Diam * Math.PI;
         double tCir = WB * Math.PI;
@@ -93,10 +121,7 @@ public class Autonomous extends LinearOpMode {
         MR.setPower(-speed);
     }
 
-    public void stopRobot() throws InterruptedException {
+    public void stopRobot() {
         waitForPos();
     }
-
-    @Override
-    public void runOpMode() throws InterruptedException {}
 }

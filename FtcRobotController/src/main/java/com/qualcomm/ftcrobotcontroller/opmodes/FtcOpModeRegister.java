@@ -57,12 +57,13 @@ public class FtcOpModeRegister implements OpModeRegister {
     manager.register("ServoRail", ServoRail.class);
     manager.register("VSpeedTeleOp", VSpeedTeleOp.class);
     manager.register("DriveMeter", DriveMeter.class);
+    manager.register("AutoDrive", AutoDrive.class);
     manager.register("NullOp", NullOp.class);
     manager.register("K9TeleOp", K9TeleOp.class);
     manager.register("K9Line", K9Line.class);
-    manager.register ("PushBotAuto", PushBotAuto.class);
-    manager.register ("PushBotManual", PushBotManual.class);
-
+    manager.register("PushBotAuto", PushBotAuto.class);
+    manager.register("PushBotManual", PushBotManual.class);
+    manager.register("Winch", Winch.class);
 
 
     /*
