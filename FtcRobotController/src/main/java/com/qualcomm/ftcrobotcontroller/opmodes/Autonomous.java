@@ -60,7 +60,7 @@ public class Autonomous {
         }
     }
 
-    private void waitForPos() {
+    public void waitForPos() {
         boolean DL;
         do {
             DL = isDone(ML,LT);
