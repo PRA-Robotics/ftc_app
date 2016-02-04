@@ -61,6 +61,9 @@ public class TeleOp extends OpMode {
      *     Open/Close Claw: L-Trigger & R-Trigger
      */
 
+    //Add functionality for 2 controllers. Allow each controller to be in its own mode. One could
+    //control the crane and the other driving, or they could both control the same mode.
+
     @Override
     public void loop() {
         if (driveMode) {
