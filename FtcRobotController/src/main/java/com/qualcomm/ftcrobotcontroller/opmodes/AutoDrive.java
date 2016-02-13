@@ -13,6 +13,7 @@ public class AutoDrive extends LinearOpMode {
         DcMotor L = hardwareMap.dcMotor.get("L");
         DcMotor R = hardwareMap.dcMotor.get("R");
         Servo hookServo = hardwareMap.servo.get("H");
+        hookServo.setPosition(0.25);
         DcMotor CDM = hardwareMap.dcMotor.get("CDM");
         Servo balServo = hardwareMap.servo.get("BS");
         A = new Autonomous(8.5, 38.2, 1120, L, R);
