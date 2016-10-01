@@ -18,7 +18,7 @@ public class GTGoal extends OpMode {
 
     //Constants
     double wheelDiameter = 9.15; //cm
-    double diffDriveRadius = 19.5; //ish cm
+    double diffDriveRadius = 20; //ish cm
     double ticksPerRotation = 1680.0;
 
     //Declare robot variables:
@@ -100,8 +100,8 @@ public class GTGoal extends OpMode {
         telemetry.addData("Delta Position R:", "(" + deltaRPos.X + "," + deltaRPos.Y + ")");
         telemetry.addData("Position L:", "(" + lPos.X + "," + lPos.Y + ")");
         telemetry.addData("Position R:", "(" + rPos.X + "," + rPos.Y + ")");
-        position.X += (lPos.X + rPos.X) / 2;
-        position.Y += (lPos.Y + rPos.Y) / 2;
+        position.X = (lPos.X + rPos.X) / 2;
+        position.Y = (lPos.Y + rPos.Y) / 2;
         telemetry.addData("Position:", "(" + position.X + "," + position.Y + ")");
         Tuple wheelDiff = lPos.difference(rPos);
         double dirtyHeading = Math.atan2(wheelDiff.X,wheelDiff.Y);
