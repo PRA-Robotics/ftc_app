@@ -76,7 +76,7 @@ public class GTGoal extends OpMode {
 
         leftMotor = hardwareMap.dcMotor.get("L"); //Set 'leftMotor' to the motor 'L' from the HardwareMap
         rightMotor = hardwareMap.dcMotor.get("R"); //Set 'rightMotor' to the motor 'R' from the HardwareMap
-        rightMotor.setDirection(DcMotor.Direction.REVERSE); //Reverses the right motor so both motors drive forward
+        leftMotor.setDirection(DcMotor.Direction.REVERSE); //Reverses the right motor so both motors drive forward
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stops robot and resets encoder
         rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Stops robot and resets encoder
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Put motor back into driving mode

@@ -85,15 +85,15 @@ public class PRATeleOp extends OpMode
         }
 
         double velocity = gamepad1.right_trigger;
-        double steering = gamepad1.left_stick_x;
+        double steering = gamepad1.left_stick_x / 1.1;
 
         if(reverseGear) {
-            leftMotor.setDirection(DcMotor.Direction.REVERSE);
-            rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        }
-        else {
             leftMotor.setDirection(DcMotor.Direction.FORWARD);
             rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        }
+        else {
+            leftMotor.setDirection(DcMotor.Direction.REVERSE);
+            rightMotor.setDirection(DcMotor.Direction.FORWARD);
         }
 
         if(gamepad1.left_trigger > 0) {
@@ -105,8 +105,8 @@ public class PRATeleOp extends OpMode
         else {
             leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            leftMotor.setPower(velocity + steering);
-            rightMotor.setPower(velocity - steering);
+            leftMotor.setPower(velocity - steering);
+            rightMotor.setPower(velocity + steering);
         }
     }
 
