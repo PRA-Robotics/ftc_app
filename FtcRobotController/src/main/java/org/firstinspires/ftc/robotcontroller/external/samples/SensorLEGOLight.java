@@ -55,10 +55,11 @@ import com.qualcomm.robotcore.hardware.LightSensor;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @TeleOp(name = "Sensor: LEGO light", group = "Sensor")
-@Disabled
+//@Disabled
 public class SensorLEGOLight extends LinearOpMode {
 
-  LightSensor lightSensor;  // Hardware Device Object
+  LightSensor ls0;  // Hardware Device Object
+  LightSensor ls1;  // Hardware Device Object
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -71,10 +72,12 @@ public class SensorLEGOLight extends LinearOpMode {
     boolean bLedOn = true;
 
     // get a reference to our Light Sensor object.
-    lightSensor = hardwareMap.lightSensor.get("light sensor");
+    ls0 = hardwareMap.lightSensor.get("LS0");
+    ls1 = hardwareMap.lightSensor.get("LS1");
 
     // Set the LED state in the beginning.
-    lightSensor.enableLed(bLedOn);
+    ls0.enableLed(bLedOn);
+    ls1.enableLed(bLedOn);
 
     // wait for the start button to be pressed.
     waitForStart();
@@ -91,7 +94,8 @@ public class SensorLEGOLight extends LinearOpMode {
 
         // button is transitioning to a pressed state.  Toggle LED
         bLedOn = !bLedOn;
-        lightSensor.enableLed(bLedOn);
+        ls0.enableLed(bLedOn);
+        ls1.enableLed(bLedOn);
       }
 
       // update previous state variable.
@@ -99,8 +103,8 @@ public class SensorLEGOLight extends LinearOpMode {
 
       // send the info back to driver station using telemetry function.
       telemetry.addData("LED", bLedOn ? "On" : "Off");
-      telemetry.addData("Raw", lightSensor.getRawLightDetected());
-      telemetry.addData("Normal", lightSensor.getLightDetected());
+      telemetry.addData("LS0 Normal", ls0.getLightDetected());
+      telemetry.addData("LS1 Normal", ls1.getLightDetected());
 
       telemetry.update();
       idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop

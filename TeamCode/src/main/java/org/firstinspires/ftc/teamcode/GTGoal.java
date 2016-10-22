@@ -35,31 +35,31 @@ public class GTGoal extends OpMode {
     /**
      * Left motor object
      */
-    DcMotor leftMotor;
+    private DcMotor leftMotor;
     /**
      * Right motor object
      */
-    DcMotor rightMotor;
+    private DcMotor rightMotor;
     /**
      * Last left encoder value
      */
-    int lastEncL;
+    private int lastEncL;
     /**
      * Last right encoder value
      */
-    int lastEncR;
+    private int lastEncR;
     /**
      * Central position of the robot (X,Y)
      */
-    Tuple position;
+    private Coord position;
     /**
      * Direction the robot is facing (Radians)
      */
-    double heading;
+    private double heading;
 
     //Declare autonomous parameters:
-    ArrayList<Tuple> path; //Stores the robot's desired route.
-    double drivingSpeed = 0.25;
+    private ArrayList<Coord> path; //Stores the robot's desired route.
+    private double drivingSpeed = 0.25;
 
     @Override
     /**
@@ -68,11 +68,11 @@ public class GTGoal extends OpMode {
     public void init() {
         path = new ArrayList<>(); //Creates a new empty ArrayList object
         //Add destinations to the robot's route (X,Y)
-        path.add(new Tuple(85,0));
-        path.add(new Tuple(85,170));
-        path.add(new Tuple(-85,170));
-        path.add(new Tuple(-85,0));
-        path.add(new Tuple(0,0));
+        path.add(new Coord(85,0));
+        path.add(new Coord(85,170));
+        path.add(new Coord(-85,170));
+        path.add(new Coord(-85,0));
+        path.add(new Coord(0,0));
 
         leftMotor = hardwareMap.dcMotor.get("L"); //Set 'leftMotor' to the motor 'L' from the HardwareMap
         rightMotor = hardwareMap.dcMotor.get("R"); //Set 'rightMotor' to the motor 'R' from the HardwareMap
@@ -83,7 +83,7 @@ public class GTGoal extends OpMode {
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //Put motor back into driving mode
         lastEncL = leftMotor.getCurrentPosition(); //Sets original encoder value to current
         lastEncR = rightMotor.getCurrentPosition(); //Sets original encoder value to current
-        position = new Tuple(0,0); //Sets starting position to (0,0)
+        position = new Coord(0,0); //Sets starting position to (0,0)
         heading = 0; //Set starting heading to 0 radians
     }
 
@@ -111,31 +111,31 @@ public class GTGoal extends OpMode {
      */
     private void updateState(int deltaEncL, int deltaEncR) {
         //Deduce the position of the left wheel based on central robot position and heading
-        Tuple lPos = new Tuple(position.X + (Math.cos(heading + (Math.PI/2)) * DIFF_DRIVE_RADIUS), position.Y + (Math.sin(heading + (Math.PI/2)) * DIFF_DRIVE_RADIUS));
+        Coord lPos = new Coord(position.getX() + (Math.cos(heading + (Math.PI/2)) * DIFF_DRIVE_RADIUS), position.getY() + (Math.sin(heading + (Math.PI/2)) * DIFF_DRIVE_RADIUS));
         //Deduce the position of the right wheel based on central robot position and heading
-        Tuple rPos = new Tuple(position.X + (Math.cos(heading - (Math.PI/2)) * DIFF_DRIVE_RADIUS), position.Y + (Math.sin(heading - (Math.PI/2)) * DIFF_DRIVE_RADIUS));
+        Coord rPos = new Coord(position.getX() + (Math.cos(heading - (Math.PI/2)) * DIFF_DRIVE_RADIUS), position.getY() + (Math.sin(heading - (Math.PI/2)) * DIFF_DRIVE_RADIUS));
 
         //Calculates the distance the left wheel has traveled
         double lDistance = (deltaEncL / TICKS_PER_ROTATION) * (WHEEL_DIAMETER * Math.PI);
         //Calculates the change in position (X,Y) of the left wheel based off of heading and distance
-        Tuple deltaLPos = new Tuple(Math.cos(heading) * lDistance, Math.sin(heading) * lDistance);
+        Vector deltaLPos = new Vector(Math.cos(heading) * lDistance, Math.sin(heading) * lDistance);
         //Calculates the distance the right wheel has traveled
         double rDistance = (deltaEncR / TICKS_PER_ROTATION) * (WHEEL_DIAMETER * Math.PI);
         //Calculates the change in position (X,Y) of the right wheel based off of heading and distance
-        Tuple deltaRPos = new Tuple(Math.cos(heading) * rDistance, Math.sin(heading) * rDistance);
+        Vector deltaRPos = new Vector(Math.cos(heading) * rDistance, Math.sin(heading) * rDistance);
 
         //Updates the left wheel position based off of the change in position
         lPos = lPos.sum(deltaLPos);
         //Updates the right wheel position based off of the change in position
         rPos = rPos.sum(deltaRPos);
         //Finds the average X position of the robot
-        position.X = (lPos.X + rPos.X) / 2;
+        position.setX((lPos.getX() + rPos.getX()) / 2);
         //Finds the average Y position of the robot
-        position.Y = (lPos.Y + rPos.Y) / 2;
+        position.setY((lPos.getY() + rPos.getY()) / 2);
 
         //Calculate dirty (non-normalized) heading based on difference in wheel positions
-        Tuple wheelDiff = lPos.difference(rPos);
-        double dirtyHeading = Math.atan2(wheelDiff.Y,wheelDiff.X) - (Math.PI / 2.0);
+        Vector wheelDiff = new Vector(lPos.difference(rPos));
+        double dirtyHeading = Math.atan2(wheelDiff.Y,wheelDiff.getX()) - (Math.PI / 2.0);
         //Normalize robot heading between [0,2PI)
         heading = (dirtyHeading > 0 ? dirtyHeading : dirtyHeading + 2 * Math.PI) % (2 * Math.PI);
     }
@@ -167,7 +167,7 @@ public class GTGoal extends OpMode {
      * @param coord target coordinates relative to starting position
      * @return True if robot has reached target, false if not
      */
-    private boolean moveTo(Tuple coord) {
+    private boolean moveTo(Coord coord) {
         //Define PID controller ratios
         final double P = 0.4;
 
@@ -199,78 +199,5 @@ public class GTGoal extends OpMode {
             rightMotor.setPower(0);
             return true;
         }
-    }
-}
-
-/**
- * Stores an X and a Y value (can be used as a coord or vector)
- */
-class Tuple {
-    /**
-     * X value of the tuple object
-     */
-    public double X;
-    /**
-     * Y value of the tuple object
-     */
-    public double Y;
-    /**
-     * Creates new Tuble object with an X and a Y value
-     * @param X initial X value
-     * @param Y initial Y value
-     */
-    public Tuple(double X, double Y) {
-        this.X = X;
-        this.Y = Y;
-    }
-
-    /**
-     * Returns the sum of a Tuple object and self
-     * @param tuple Tuple object to be added to self
-     * @return Sum of Tuple object tuple and self
-     */
-    public Tuple sum(Tuple tuple) {
-        double newX = this.X + tuple.X;
-        double newY = this.Y + tuple.Y;
-        return new Tuple(newX,newY);
-    }
-    /**
-     * Returns the difference of a Tuple object subtracted from self
-     * @param tuple Tuple object to be subtracted from self
-     * @return Difference of self and Tuple object tuple
-     */
-    public Tuple difference(Tuple tuple) {
-        double newX = this.X - tuple.X;
-        double newY = this.Y - tuple.Y;
-        return new Tuple(newX,newY);
-    }
-    /**
-     * Returns self scaled by a double
-     * @param scalar scale
-     * @return scaled Tuple object
-     */
-    public Tuple scale(double scalar) {
-        double newX = this.X * scalar;
-        double newY = this.Y * scalar;
-        return new Tuple(newX,newY);
-    }
-    /**
-     * Returns the difference between self (as a point) and a Tuple object (as a point)
-     * @param tuple Tuple object to be used (as a point) and have its distance from self (as a point) calculated
-     * @return Distance between Tuple object tuple (as a point) and self (as a point)
-     */
-    public double distanceTo(Tuple tuple) {
-        Tuple vector = tuple.difference(this);
-        return Math.sqrt(Math.pow(vector.X, 2) + Math.pow(vector.Y, 2));
-    }
-    /**
-     * Returns the heading in radians from self (as a point) to a Tuple object (as a point)
-     * @param tuple Tuple object to be used (as a point) and have its heading from self (as a point) calculated
-     * @return Heading in radians from self (as a point) to Tuple object tuple (as a point)
-     */
-    public double headingTo(Tuple tuple) {
-        Tuple vector = tuple.difference(this);
-        double angle = Math.atan2(vector.Y, vector.X);
-        return (angle > 0 ? angle : angle + 2 * Math.PI);
     }
 }
